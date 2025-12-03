@@ -114,7 +114,7 @@
     if (!yearSelect) return;
     yearSelect.innerHTML = ''; // clear while loading
 
-    // Add placeholder immediately (so UI shows "Select year" while loading)
+    // Add placeholder immediately (so UI shows "Loading..." while loading)
     const placeholder = document.createElement('option');
     placeholder.value = '';
     placeholder.disabled = true;
@@ -190,11 +190,6 @@
       opt.textContent = String(y);
       yearSelect.appendChild(opt);
     });
-
-    // NOTE: we intentionally do not auto-select a year to force user choice.
-    // If you want to restore lastYear from sessionStorage automatically:
-    // const last = sessionStorage.getItem('lastYear');
-    // if (last && years.includes(Number(last))) yearSelect.value = String(last);
   }
 
   // Ensure XLSX preloaded (best-effort) and populate initial years if diseaseSelect has a value
@@ -203,8 +198,6 @@
     if (diseaseSelect && diseaseSelect.value) {
       await populateYearsForDisease(diseaseSelect.value);
     } else if (diseaseSelect) {
-      // keep placeholder 'Select disease' if present - still populate year? do not populate here
-      // we will populate when diseaseSelect changes
       yearSelect && (yearSelect.innerHTML = '<option value="">No data</option>');
     } else if (yearSelect) {
       // fallback, fill a safe year range
@@ -228,7 +221,6 @@
   // when disease changes, refresh year list
   if (diseaseSelect) {
     diseaseSelect.addEventListener('change', () => {
-      // clear yearSelect and repopulate
       populateYearsForDisease(diseaseSelect.value).then(() => updateActionButtons()).catch(() => updateActionButtons());
     });
   }
@@ -268,38 +260,66 @@
 
   // --------- enable/disable action buttons based on selections ----------
   // Buttons remain disabled until user picks both a disease and a year
+  function isYearValid(val) {
+    if (!val) return false;
+    const s = String(val).trim().toLowerCase();
+    if (s === '' || s === 'no data' || s === 'loading...' || s === 'select year') return false;
+    return !Number.isNaN(Number(val));
+  }
+
+  function isDiseaseValid(val) {
+    if (!val) return false;
+    const s = String(val).trim().toLowerCase();
+    return !(s === '' || s === 'select disease');
+  }
+
   function updateActionButtons() {
-    const d = diseaseSelect ? diseaseSelect.value : '';
-    const y = yearSelect ? yearSelect.value : '';
-    const enabled = (!!d && d !== '') && (!!y && y !== '');
+    try {
+      const d = diseaseSelect ? diseaseSelect.value : '';
+      const y = yearSelect ? yearSelect.value : '';
+      const enabled = isDiseaseValid(d) && isYearValid(y);
 
-    if (viewMapBtn) {
-      viewMapBtn.disabled = !enabled;
-      if (viewMapBtn.disabled) {
-        viewMapBtn.classList.add('disabled');
-        viewMapBtn.setAttribute('aria-disabled', 'true');
-      } else {
-        viewMapBtn.classList.remove('disabled');
-        viewMapBtn.removeAttribute('aria-disabled');
+      if (viewMapBtn) {
+        viewMapBtn.disabled = !enabled;
+        if (viewMapBtn.disabled) {
+          viewMapBtn.classList.add('disabled');
+          viewMapBtn.setAttribute('aria-disabled', 'true');
+        } else {
+          viewMapBtn.classList.remove('disabled');
+          viewMapBtn.removeAttribute('aria-disabled');
+        }
       }
-    }
 
-    if (openStateBtn) {
-      openStateBtn.disabled = !enabled;
-      if (openStateBtn.disabled) {
-        openStateBtn.classList.add('disabled');
-        openStateBtn.setAttribute('aria-disabled', 'true');
-      } else {
-        openStateBtn.classList.remove('disabled');
-        openStateBtn.removeAttribute('aria-disabled');
+      if (openStateBtn) {
+        openStateBtn.disabled = !enabled;
+        if (openStateBtn.disabled) {
+          openStateBtn.classList.add('disabled');
+          openStateBtn.setAttribute('aria-disabled', 'true');
+        } else {
+          openStateBtn.classList.remove('disabled');
+          openStateBtn.removeAttribute('aria-disabled');
+        }
       }
+
+      console.debug('updateActionButtons:', { disease: d, year: y, enabled });
+    } catch (err) {
+      console.error('updateActionButtons error', err);
     }
   }
 
   // initialize and wire change events
   updateActionButtons();
   if (yearSelect) yearSelect.addEventListener('change', updateActionButtons);
-  // also ensure disease change updates buttons (already handled during populateYearsForDisease flow)
+
+  // Watch for year select option changes (useful when populateYearsForDisease replaces options)
+  if (yearSelect && typeof MutationObserver !== 'undefined') {
+    const mo = new MutationObserver(() => {
+      clearTimeout(window.__year_watch_timeout__);
+      window.__year_watch_timeout__ = setTimeout(updateActionButtons, 40);
+    });
+    mo.observe(yearSelect, { childList: true, subtree: true });
+  }
 
 })();
+
 

@@ -1,8 +1,6 @@
 /* style.css — Gestalt-updated, Professional Blue Theme
-   - Keep JS & HTML intact; only visual/styling changes
-   - Goals: improved spacing, hierarchy, unified color palette,
-            readable typography, better figure-ground contrast,
-            consistent button styles, and improved card alignment.
+   - Improved spacing, hierarchy, color palette,
+     button consistency, map visualization, heatmap fixes
 */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@600;700&display=swap');
@@ -10,11 +8,11 @@
 :root{
   --bg-gradient: linear-gradient(180deg, #f6f9ff 0%, #eef6ff 100%);
   --page-pad: 18px;
-  --text: #052244;            /* deep navy for text */
+  --text: #052244;
   --muted: #6b7280;
-  --accent: #1466f2;          /* primary blue */
-  --accent-2: #0f6ef6;        /* brighter blue for charts */
-  --accent-3: #0ea5d9;        /* teal-ish accent for secondary actions */
+  --accent: #1466f2;
+  --accent-2: #0f6ef6;
+  --accent-3: #0ea5d9;
   --card-bg: #ffffff;
   --muted-bg: #f6f8fb;
   --shadow-1: 0 10px 28px rgba(8, 36, 68, 0.06);
@@ -22,7 +20,7 @@
   --radius: 12px;
 }
 
-/* Dark theme mapping (keeps contrast) */
+/* Dark theme */
 [data-theme='dark']{
   --bg-gradient: linear-gradient(180deg, #050612 0%, #081123 100%);
   --card-bg: rgba(10,14,22,0.85);
@@ -35,22 +33,31 @@
   --border-subtle: rgba(255,255,255,0.04);
 }
 
-/* ------- Base & Layout ------- */
+/*--------------------------------------*/
+/* Base */
+/*--------------------------------------*/
 *{ box-sizing: border-box; }
-html,body{ height:100%; }
+html, body{ height:100%; }
 body{
   margin:0;
-  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  font-family: Inter, system-ui, sans-serif;
   color:var(--text);
   background: var(--bg-gradient);
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
+  -webkit-font-smoothing: antialiased;
 }
 
+/*--------------------------------------*/
 /* Container */
-.container{ max-width:1200px; margin:14px auto; padding:0 var(--page-pad); }
+/*--------------------------------------*/
+.container{
+  max-width:1200px;
+  margin:14px auto;
+  padding:0 var(--page-pad);
+}
 
+/*--------------------------------------*/
 /* Header */
+/*--------------------------------------*/
 .header{
   display:flex;
   gap:18px;
@@ -59,206 +66,238 @@ body{
   padding:12px var(--page-pad);
   background: linear-gradient(180deg, rgba(255,255,255,0.86), rgba(255,255,255,0.78));
   border-bottom: 1px solid var(--border-subtle);
-  position: sticky;
-  top:0;
-  z-index: 120;
+  position:sticky;
+  top:0; z-index:120;
   backdrop-filter: blur(6px);
 }
-[data-theme='dark'] .header{ background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); }
-
-/* Branding */
-.brand{ display:flex; align-items:center; gap:14px; min-width:0; }
-.brand .logo{ width:46px; height:46px; border-radius:10px; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,var(--accent),var(--accent-2)); box-shadow: var(--shadow-1); }
-.brand .logo img{ width:100%; height:auto; border-radius:8px; display:block; }
-.brand .title h1{ margin:0; font-family:Poppins, Inter; font-size:18px; letter-spacing: -0.2px; }
-.brand .title small{ display:block; color:var(--muted); font-size:13px; margin-top:2px; }
-
-/* Header Controls: group + spacing improved (Proximity) */
-.header-controls{
-  display:flex;
-  gap:14px;
-  align-items:center;
-  flex-wrap:wrap;
+[data-theme='dark'] .header{
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
 }
 
-/* Group dataset & year together visually (no HTML change required) */
+/* Branding */
+.brand{ display:flex; align-items:center; gap:14px; }
+.brand .logo{
+  width:46px; height:46px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  box-shadow: var(--shadow-1);
+}
+.brand .logo img{
+  width:100%; border-radius:8px;
+}
+.brand .title h1{
+  margin:0; font-family:Poppins;
+  font-size:18px; letter-spacing:-0.2px;
+}
+.brand .title small{
+  font-size:13px; margin-top:2px; color:var(--muted);
+}
+
+/* Controls */
+.header-controls{
+  display:flex; gap:14px; align-items:center; flex-wrap:wrap;
+}
 .header-controls select{
   padding:8px 10px;
   border-radius:10px;
   border:1px solid var(--border-subtle);
-  background: transparent;
-  min-width:120px;
-  color:inherit;
-  font-size:14px;
+  background: white;
+  min-width:120px; font-size:14px;
 }
 
-/* Button styles unified (Similarity) */
+/*--------------------------------------*/
+/* Buttons */
+/*--------------------------------------*/
 .btn-light, .btn-green, .btn-ghost, .btn-link{
   cursor:pointer;
   border-radius:10px;
   padding:8px 12px;
   font-weight:600;
-  border: none;
   display:inline-flex;
   align-items:center;
-  gap:8px;
-  transition: transform .14s ease, box-shadow .14s ease, opacity .12s;
-  box-shadow: none;
+  transition: .14s;
+  border:none;
 }
 
-/* Primary (accent) button */
+/* primary */
 .btn-green{
   background: var(--accent);
-  color: #fff;
+  color:#fff;
 }
 .btn-light{
-  background: #f4f7ff;
-  color: var(--text);
-  border: 1px solid var(--border-subtle);
+  background:#f4f7ff;
+  border:1px solid var(--border-subtle);
 }
 
-/* subtle hover */
-.btn-light:hover, .btn-green:hover{ transform: translateY(-2px); box-shadow: var(--shadow-1); }
+/* hover */
+.btn-green:hover, .btn-light:hover{
+  transform:translateY(-2px);
+  box-shadow:var(--shadow-1);
+}
 
-/* theme toggle button */
+/* theme toggle */
 .theme-btn{
-  width:40px; height:40px; border-radius:50%; background:var(--card-bg); display:flex; align-items:center; justify-content:center; font-size:16px; border:1px solid var(--border-subtle);
-  cursor:pointer;
+  width:40px; height:40px;
+  border-radius:50%;
+  background:var(--card-bg);
+  border:1px solid var(--border-subtle);
+  display:flex; align-items:center; justify-content:center;
 }
 
-/* Hero */
-.hero{ position:relative; width:100%; margin-bottom:14px; overflow:hidden; border-radius: var(--radius); }
-.hero-img{ width:100%; height:320px; object-fit:cover; display:block; filter:contrast(1.02) saturate(1.05); border-bottom-left-radius: var(--radius); border-bottom-right-radius: var(--radius); }
-.hero-overlay{ position:absolute; left:28px; top:28px; color: #fff; text-shadow: 0 6px 20px rgba(0,0,0,0.35); }
-.hero-overlay h2{ margin:0 0 8px; font-family:Poppins; font-size:26px; }
-.hero-overlay p{ margin:0 0 12px; font-size:15px; color: rgba(255,255,255,0.95); }
+/*--------------------------------------*/
+/* HERO SECTION */
+/*--------------------------------------*/
+.hero{
+  position:relative;
+  width:100%;
+  margin-bottom:14px;
+  overflow:hidden;
+  border-radius:var(--radius);
+}
+.hero-img{
+  width:100%; height:320px; object-fit:cover;
+  display:block;
+}
+.hero-overlay{
+  position:absolute;
+  left:28px; top:28px;
+  color:#fff;
+  text-shadow:0 6px 20px rgba(0,0,0,0.35);
+}
+.hero-overlay h2{
+  margin:0 0 8px;
+  font-family:Poppins; font-size:26px;
+}
+.hero-overlay p{
+  margin:0 0 12px;
+  font-size:15px;
+  color:rgba(255,255,255,0.95);
+}
 
-/* Grid layout */
-.grid{ display:grid; grid-template-columns: 1fr 340px; gap:22px; align-items:start; }
-@media (max-width:980px){ .grid{ grid-template-columns: 1fr; } }
+/*--------------------------------------*/
+/* FIX: HERO BUTTONS SPACING + DATA SOURCES WHITE PILL */
+/*--------------------------------------*/
+.hero-actions{
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
+  margin-top:12px;
+  flex-wrap:wrap;
+  z-index:10;
+}
 
-/* Cards - increased radius, subtle shadow and consistent padding (Figure–Ground) */
+/* Data Sources white pill button */
+.hero-actions .link-muted{
+  background:#ffffff;
+  padding:8px 14px;
+  border-radius:10px;
+  text-decoration:none;
+  font-weight:600;
+  color:var(--text) !important;
+  box-shadow:var(--shadow-1);
+  border:1px solid rgba(0,0,0,0.05);
+}
+.hero-actions .link-muted:hover{
+  transform:translateY(-2px);
+  box-shadow:0 14px 32px rgba(8,36,68,0.08);
+}
+
+/*--------------------------------------*/
+/* GRID */
+/*--------------------------------------*/
+.grid{
+  display:grid;
+  grid-template-columns:1fr 340px;
+  gap:22px;
+}
+@media(max-width:980px){
+  .grid{ grid-template-columns:1fr; }
+}
+
+/*--------------------------------------*/
+/* Cards */
+/*--------------------------------------*/
 .card{
-  background: var(--card-bg);
-  border-radius: calc(var(--radius) + 4px);
+  background:var(--card-bg);
+  border-radius:calc(var(--radius) + 4px);
   padding:16px;
-  box-shadow: var(--shadow-1);
-  border: 1px solid var(--border-subtle);
-  transition: transform .16s ease, box-shadow .16s ease;
-  overflow: visible;
+  box-shadow:var(--shadow-1);
+  border:1px solid var(--border-subtle);
+  transition:.16s;
 }
-.card:hover{ transform: translateY(-6px); box-shadow: 0 20px 48px rgba(8,36,68,0.08); }
+.card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 20px 48px rgba(8,36,68,0.1);
+}
 
-/* Section titles improved (Hierarchy) */
-.section-title{ font-size:18px; font-weight:700; margin:0 0 12px; display:block; color:var(--text); padding-bottom:8px; border-bottom:1px solid rgba(0,0,0,0.04); }
-.small-title{ margin:0 0 10px; font-weight:700; }
+/* Titles */
+.section-title{
+  font-size:18px; font-weight:700;
+  margin:0 0 12px;
+  padding-bottom:8px;
+  border-bottom:1px solid rgba(0,0,0,0.04);
+}
+.small-title{ font-weight:700; margin-bottom:10px; }
 
-/* Notes and muted text */
-.note{ color:var(--muted); font-size:13px; margin-top:8px; }
+/*--------------------------------------*/
+/* Misc Text */
+/*--------------------------------------*/
+.note{ font-size:13px; color:var(--muted); }
 
-/* Chart sizes — keep consistent (Continuity & Balance) */
-.chart-canvas{ width:100% !important; height:320px !important; display:block; }
-.chart-small{ height:240px !important; }
-#matrixHeatmap{ width:100%; height:420px !important; display:block; }
+/*--------------------------------------*/
+/* Maps + Heatmap */
+/*--------------------------------------*/
+#map, #stateMap{
+  width:100%; height:500px;
+  border-radius:10px;
+  border:1px solid var(--border-subtle);
+  overflow:hidden;
+}
 
-/* Map containers - slightly softer corners for visual continuity */
-#map, #stateMap{ height:500px; width:100%; border-radius:10px; overflow:hidden; border:1px solid var(--border-subtle); }
+/*--------------------------------------*/
+/* Tables */
+/*--------------------------------------*/
+#rawTable{
+  width:100%; border-collapse:collapse;
+}
+#rawTable th{
+  font-weight:700;
+  border-bottom:1px solid rgba(0,0,0,0.04);
+  padding:10px;
+}
+#rawTable td{
+  padding:10px;
+  border-bottom:1px solid rgba(0,0,0,0.02);
+}
 
-/* Table */
-#rawTable{ width:100%; border-collapse:collapse; font-size:14px; }
-#rawTable th{ text-align:left; background:transparent; font-weight:700; border-bottom:1px solid rgba(0,0,0,0.04); padding:10px 8px; }
-#rawTable td{ padding:10px 8px; border-bottom:1px solid rgba(0,0,0,0.02); color:var(--text); }
-
+/*--------------------------------------*/
 /* Footer */
-.footer{ margin-top:24px; padding:10px 20px; color:var(--muted); font-size:13px; text-align:center; }
+/*--------------------------------------*/
+.footer{
+  margin-top:24px;
+  padding:10px;
+  text-align:center;
+  color:var(--muted);
+  font-size:13px;
+}
 
-/* Heatmap wrapper/table styling */
-.heatmap-wrapper{ width:100%; overflow:auto; position:relative; box-sizing:border-box; border-radius:10px; }
-.heatmap-fallback table{ border-collapse:collapse; width:100%; min-width:640px; }
-.heatmap-fallback th, .heatmap-fallback td{ padding:10px 12px; border-bottom:1px solid rgba(0,0,0,0.04); background:var(--card-bg); }
-.heatmap-fallback thead th{ position:sticky; top:0; z-index:5; background:var(--card-bg); }
+/*--------------------------------------*/
+/* Status Message */
+/*--------------------------------------*/
+#app-status{
+  display:none;
+  padding:8px 12px;
+  border-radius:6px;
+  margin-top:8px;
+}
+#app-status.error{ background:#ffe1e1; }
+#app-status.warn { background:#fff4d6; }
+#app-status.ok   { background:#e6ffe6; }
 
-/* small responsive tweaks */
-@media (max-width:640px){
-  .header { padding:10px 12px; }
+/*--------------------------------------*/
+/* Responsive */
+/*--------------------------------------*/
+@media(max-width:640px){
+  .header{ padding:10px 12px; }
   .brand h1{ font-size:16px; }
-  .header-controls select{ min-width:100px; padding:6px 8px; }
-  .btn-light, .btn-green{ padding:7px 10px; }
-  .chart-canvas{ height:260px !important; }
-}
-
-/* Accessibility & focus */
-:focus{ outline: 3px solid rgba(20,102,242,0.12); outline-offset: 2px; border-radius:8px; }
-
-/* Minor utility classes */
-.link-muted{ color:var(--muted); font-weight:600; text-decoration: none; }
-
-/* Status message box (added) */
-#app-status {
-  font-family: Arial, sans-serif;
-  font-size: 14px;
-  background: rgba(255,255,255,0.04);
-  color: #fff;
-  border: 1px solid rgba(255,255,255,0.04);
-  padding: 8px 12px;
-  border-radius: 6px;
-  max-width: 100%;
-  box-sizing: border-box;
-  display: none; /* stays hidden until needed */
-}
-
-/* Variants for status */
-#app-status.error { background: rgba(255,80,80,0.12); border-color: rgba(255,80,80,0.25); color: #ffecec; }
-#app-status.warn  { background: rgba(255,200,80,0.06); border-color: rgba(255,200,80,0.15); color: #fff6e6; }
-#app-status.ok    { background: rgba(80,200,120,0.06); border-color: rgba(80,200,120,0.15); color: #e9fff0; }
-
-/* SINGLE-COLUMN STACKED DASHBOARD LAYOUT */
-.container.single-col {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-/* Ensure cards stretch full width but look neat */
-.card {
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* Map sizing (override earlier if needed) */
-#map {
-  width: 100%;
-  height: 480px;
-  border-radius: 10px;
-}
-
-/* Heatmap sizing */
-.heatmap-wrapper.heatmap-wide {
-  width: 100%;
-  height: 480px;
-  padding: 8px;
-  box-sizing: border-box;
-}
-
-#matrixHeatmap {
-  width: 100% !important;
-  height: 100% !important;
-  display: block;
-}
-
-/* Charts */
-.chart-canvas {
-  width: 100% !important;
-  height: 100% !important;
-  display: block;
-}
-
-/* Responsive tweaks */
-@media (max-width: 900px) {
-  #map { height: 400px; }
-  .heatmap-wrapper.heatmap-wide { height: 400px; }
-  .container.single-col { padding: 12px; }
 }

@@ -1,13 +1,14 @@
-/* style.css — Updated: improved dark-mode contrast for hero actions + overall lighter dark theme */
+/* style.css — Updated: hero actions spacing + data sources, disabled button styling,
+   softened dark theme for readability */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@600;700&display=swap');
 
 :root{
   --bg-gradient: linear-gradient(180deg, #f6f9ff 0%, #eef6ff 100%);
   --page-pad: 18px;
-  --text: #052244;            /* deep navy for text */
+  --text: #052244;
   --muted: #6b7280;
-  --accent: #1466f2;          /* primary blue */
+  --accent: #1466f2;
   --accent-2: #0f6ef6;
   --accent-3: #0ea5d9;
   --card-bg: #ffffff;
@@ -17,10 +18,9 @@
   --radius: 12px;
 }
 
-/* Dark theme — slightly softened so content is readable */
+/* Dark theme — slightly softened */
 [data-theme='dark']{
   --bg-gradient: linear-gradient(180deg, #071022 0%, #0b1722 100%);
-  /* lighter cards than before so content breathes */
   --card-bg: rgba(24,30,38,0.92);
   --text: #eaf4ff;
   --muted: #9aa8bc;
@@ -31,7 +31,7 @@
   --border-subtle: rgba(255,255,255,0.04);
 }
 
-/* ------- Base & Layout ------- */
+/* Base */
 *{ box-sizing: border-box; }
 html,body{ height:100%; }
 body{
@@ -60,10 +60,7 @@ body{
   z-index: 120;
   backdrop-filter: blur(6px);
 }
-[data-theme='dark'] .header{
-  /* a touch lighter than total-black to avoid harsh contrast */
-  background: linear-gradient(180deg, rgba(10,14,20,0.75), rgba(8,12,18,0.7));
-}
+[data-theme='dark'] .header{ background: linear-gradient(180deg, rgba(10,14,20,0.75), rgba(8,12,18,0.7)); }
 
 /* Branding */
 .brand{ display:flex; align-items:center; gap:14px; min-width:0; }
@@ -73,21 +70,8 @@ body{
 .brand .title small{ display:block; color:var(--muted); font-size:13px; margin-top:2px; }
 
 /* Header Controls */
-.header-controls{
-  display:flex;
-  gap:14px;
-  align-items:center;
-  flex-wrap:wrap;
-}
-.header-controls select{
-  padding:8px 10px;
-  border-radius:10px;
-  border:1px solid var(--border-subtle);
-  background: transparent;
-  min-width:120px;
-  color:inherit;
-  font-size:14px;
-}
+.header-controls{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
+.header-controls select{ padding:8px 10px; border-radius:10px; border:1px solid var(--border-subtle); background: transparent; min-width:120px; color:inherit; font-size:14px; }
 
 /* Buttons */
 .btn-light, .btn-green, .btn-ghost, .btn-link{
@@ -106,6 +90,16 @@ body{
 .btn-light{ background: #f4f7ff; color: var(--text); border: 1px solid var(--border-subtle); }
 .btn-light:hover, .btn-green:hover{ transform: translateY(-2px); box-shadow: var(--shadow-1); }
 .theme-btn{ width:40px; height:40px; border-radius:50%; background:var(--card-bg); display:flex; align-items:center; justify-content:center; font-size:16px; border:1px solid var(--border-subtle); cursor:pointer; }
+
+/* Disabled button appearance (accessible + clear) */
+.btn-light[disabled], .btn-green[disabled], .btn-ghost[disabled], .btn-link[disabled],
+.btn-light.disabled, .btn-green.disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+  pointer-events: none;
+}
 
 /* Hero */
 .hero{ position:relative; width:100%; margin-bottom:14px; overflow:hidden; border-radius: var(--radius); }
@@ -142,8 +136,8 @@ body{
 
 /* Dark-mode override for Data Sources: lighter pill but dark text for good contrast */
 [data-theme='dark'] .hero-actions .link-muted {
-  background: rgba(255,255,255,0.14); /* visible on dark hero */
-  color: #052244 !important;          /* dark text for readability */
+  background: rgba(255,255,255,0.14);
+  color: #052244 !important;
   box-shadow: 0 8px 20px rgba(0,0,0,0.45);
   border: 1px solid rgba(255,255,255,0.06);
 }
@@ -153,15 +147,7 @@ body{
 @media (max-width:980px){ .grid{ grid-template-columns: 1fr; } }
 
 /* Cards */
-.card{
-  background: var(--card-bg);
-  border-radius: calc(var(--radius) + 4px);
-  padding:16px;
-  box-shadow: var(--shadow-1);
-  border: 1px solid var(--border-subtle);
-  transition: transform .16s ease, box-shadow .16s ease;
-  overflow: visible;
-}
+.card{ background: var(--card-bg); border-radius: calc(var(--radius) + 4px); padding:16px; box-shadow: var(--shadow-1); border: 1px solid var(--border-subtle); transition: transform .16s ease, box-shadow .16s ease; overflow: visible; }
 .card:hover{ transform: translateY(-6px); box-shadow: 0 20px 48px rgba(8,36,68,0.08); }
 
 /* Text */
@@ -205,18 +191,7 @@ body{
 .link-muted{ color:var(--muted); font-weight:600; text-decoration: none; }
 
 /* Status message box */
-#app-status {
-  font-family: Arial, sans-serif;
-  font-size: 14px;
-  background: rgba(255,255,255,0.04);
-  color: #fff;
-  border: 1px solid rgba(255,255,255,0.04);
-  padding: 8px 12px;
-  border-radius: 6px;
-  max-width: 100%;
-  box-sizing: border-box;
-  display: none;
-}
+#app-status { font-family: Arial, sans-serif; font-size: 14px; background: rgba(255,255,255,0.04); color: #fff; border: 1px solid rgba(255,255,255,0.04); padding: 8px 12px; border-radius: 6px; max-width: 100%; box-sizing: border-box; display: none; }
 #app-status.error { background: rgba(255,80,80,0.12); border-color: rgba(255,80,80,0.25); color: #ffecec; }
 #app-status.warn  { background: rgba(255,200,80,0.06); border-color: rgba(255,200,80,0.15); color: #fff6e6; }
 #app-status.ok    { background: rgba(80,200,120,0.06); border-color: rgba(80,200,120,0.15); color: #e9fff0; }

@@ -1,5 +1,5 @@
-// script.js - index page behavior (keeps existing IDs & functions)
-// Cleaned up and hardened version
+// script.js - index page behavior (cleaned, hardened, plus button enable/disable)
+// Replace your current script.js with this file.
 
 (function () {
   // Theme toggle
@@ -38,6 +38,9 @@
 
   const diseaseSelect = document.getElementById('diseaseSelect');
   const yearSelect = document.getElementById('yearInput');
+  const viewMapBtn = document.getElementById('viewMap');
+  const openStateBtn = document.getElementById('openState');
+  const heroOpenMap = document.getElementById('heroOpenMap');
 
   /**
    * Ensure XLSX library is loaded (injects CDN script if needed).
@@ -48,10 +51,7 @@
     return new Promise((resolve, reject) => {
       const s = document.createElement('script');
       s.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
-      s.onload = () => {
-        // small timeout to ensure globals set
-        setTimeout(resolve, 10);
-      };
+      s.onload = () => setTimeout(resolve, 10);
       s.onerror = (err) => reject(new Error('Failed to load XLSX library: ' + err));
       document.head.appendChild(s);
     });
@@ -69,12 +69,8 @@
 
     for (const candidate of candidates) {
       try {
-        const url = candidate;
-        const resp = await fetch(url, { cache: 'no-store' });
-        if (!resp.ok) {
-          // Not found or server error - try next candidate
-          continue;
-        }
+        const resp = await fetch(candidate, { cache: 'no-store' });
+        if (!resp.ok) continue;
 
         if (candidate.toLowerCase().endsWith('.json')) {
           const json = await resp.json();
@@ -82,49 +78,52 @@
           continue;
         }
 
-        // handle xlsx
+        // XLSX
         const arrayBuffer = await resp.arrayBuffer();
         try {
-          await ensureXLSX(); // ensure XLSX loaded
+          await ensureXLSX();
         } catch (err) {
           console.warn('XLSX library could not be loaded:', err);
           continue;
         }
 
-        // read workbook from array buffer
         const data = new Uint8Array(arrayBuffer);
         let wb;
         try {
           wb = XLSX.read(data, { type: 'array' });
         } catch (err) {
-          // Some hosts may require different reading; warn and continue
           console.warn('XLSX.read failed for', candidate, err);
           continue;
         }
-
         if (!wb || !wb.SheetNames || wb.SheetNames.length === 0) continue;
         const sheet = wb.Sheets[wb.SheetNames[0]];
         const rows = XLSX.utils.sheet_to_json(sheet, { defval: null });
         if (Array.isArray(rows) && rows.length) return rows;
       } catch (err) {
-        // network or parsing error - continue to next candidate
         console.warn('Failed to fetch/parse', candidate, err);
       }
     }
-
-    // no candidate succeeded
     return null;
   }
 
   /**
    * Populate the year select based on rows obtained from the dataset.
-   * Normalizes Year field (handles Year/ year / numeric strings).
+   * Adds a "Select year" placeholder and does NOT auto-select a year.
    */
   async function populateYearsForDisease(diseaseKey) {
     if (!yearSelect) return;
     yearSelect.innerHTML = ''; // clear while loading
 
+    // Add placeholder immediately (so UI shows "Select year" while loading)
+    const placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.disabled = true;
+    placeholder.selected = true;
+    placeholder.textContent = 'Loading...';
+    yearSelect.appendChild(placeholder);
+
     if (!diseaseKey || !datasetsMap[diseaseKey]) {
+      yearSelect.innerHTML = '';
       const opt = document.createElement('option');
       opt.textContent = 'No data';
       opt.value = '';
@@ -135,6 +134,8 @@
     const base = datasetsMap[diseaseKey];
     const rows = await fetchRowsFromCandidates(base);
 
+    yearSelect.innerHTML = ''; // clear loading placeholder
+
     if (!rows || !rows.length) {
       const opt = document.createElement('option');
       opt.textContent = 'No data';
@@ -143,15 +144,13 @@
       return;
     }
 
-    // extract years - accept 'Year' or 'year' or numeric-looking values
+    // extract years - accept 'Year' or 'year' or numeric-looking keys
     const yearSet = new Set();
     for (const r of rows) {
-      // search possible keys
       let val = null;
       if (Object.prototype.hasOwnProperty.call(r, 'Year')) val = r['Year'];
       else if (Object.prototype.hasOwnProperty.call(r, 'year')) val = r['year'];
       else {
-        // fallback: find any numeric value that looks like a year
         for (const k of Object.keys(r)) {
           const v = r[k];
           if (v == null) continue;
@@ -162,7 +161,6 @@
           }
         }
       }
-
       if (val == null) continue;
       const num = Number(val);
       if (!Number.isNaN(num)) yearSet.add(num);
@@ -177,59 +175,65 @@
       return;
     }
 
-    // Insert placeholder so user must choose a year
-const ph = document.createElement('option');
-ph.value = '';
-ph.textContent = 'Select year';
-ph.disabled = true;
-ph.selected = true;
-yearSelect.appendChild(ph);
+    // insert the "Select year" placeholder
+    const ph = document.createElement('option');
+    ph.value = '';
+    ph.textContent = 'Select year';
+    ph.disabled = true;
+    ph.selected = true;
+    yearSelect.appendChild(ph);
 
-// Add actual year options
-years.forEach((y) => {
-  const opt = document.createElement('option');
-  opt.value = String(y);
-  opt.textContent = String(y);
-  yearSelect.appendChild(opt);
-});
+    // append sorted years
+    years.forEach((y) => {
+      const opt = document.createElement('option');
+      opt.value = String(y);
+      opt.textContent = String(y);
+      yearSelect.appendChild(opt);
+    });
+
+    // NOTE: we intentionally do not auto-select a year to force user choice.
+    // If you want to restore lastYear from sessionStorage automatically:
+    // const last = sessionStorage.getItem('lastYear');
+    // if (last && years.includes(Number(last))) yearSelect.value = String(last);
   }
 
-  // on load: try to populate year list for current disease selection
+  // Ensure XLSX preloaded (best-effort) and populate initial years if diseaseSelect has a value
   (async () => {
-    try {
-      // attempt to preload XLSX lib (not mandatory)
-      await ensureXLSX().catch(() => {
-        // ignore - we will try to load per-file if needed later
-      });
-    } catch (e) {
-      // ignore
-    }
+    try { await ensureXLSX().catch(() => {}); } catch (e) {}
     if (diseaseSelect && diseaseSelect.value) {
-      populateYearsForDisease(diseaseSelect.value);
+      await populateYearsForDisease(diseaseSelect.value);
     } else if (diseaseSelect) {
-      // if no selection, still call with current value
-      populateYearsForDisease(diseaseSelect.value);
+      // keep placeholder 'Select disease' if present - still populate year? do not populate here
+      // we will populate when diseaseSelect changes
+      yearSelect && (yearSelect.innerHTML = '<option value="">No data</option>');
     } else if (yearSelect) {
-      // fallback: if no disease select, fill a safe year range 2008..current year
+      // fallback, fill a safe year range
       yearSelect.innerHTML = '';
       const now = new Date().getFullYear();
+      const ph = document.createElement('option');
+      ph.value = '';
+      ph.disabled = true;
+      ph.selected = true;
+      ph.textContent = 'Select year';
+      yearSelect.appendChild(ph);
       for (let y = 2008; y <= now; y++) {
         const opt = document.createElement('option');
         opt.value = String(y);
         opt.textContent = String(y);
         yearSelect.appendChild(opt);
       }
-      yearSelect.value = '2010';
     }
   })();
 
   // when disease changes, refresh year list
   if (diseaseSelect) {
-    diseaseSelect.addEventListener('change', () => populateYearsForDisease(diseaseSelect.value));
+    diseaseSelect.addEventListener('change', () => {
+      // clear yearSelect and repopulate
+      populateYearsForDisease(diseaseSelect.value).then(() => updateActionButtons()).catch(() => updateActionButtons());
+    });
   }
 
   // view map button -> open map with selected disease & year
-  const viewMapBtn = document.getElementById('viewMap');
   if (viewMapBtn) {
     viewMapBtn.addEventListener('click', () => {
       const d = diseaseSelect ? diseaseSelect.value : '';
@@ -240,7 +244,6 @@ years.forEach((y) => {
   }
 
   // open example state button
-  const openStateBtn = document.getElementById('openState');
   if (openStateBtn) {
     openStateBtn.addEventListener('click', () => {
       const d = diseaseSelect ? diseaseSelect.value : '';
@@ -251,7 +254,6 @@ years.forEach((y) => {
   }
 
   // hero button: open map (if disease/year selected, use them, else open plain map)
-  const heroOpenMap = document.getElementById('heroOpenMap');
   if (heroOpenMap) {
     heroOpenMap.addEventListener('click', () => {
       const d = diseaseSelect ? diseaseSelect.value : '';
@@ -263,4 +265,41 @@ years.forEach((y) => {
       }
     });
   }
+
+  // --------- enable/disable action buttons based on selections ----------
+  // Buttons remain disabled until user picks both a disease and a year
+  function updateActionButtons() {
+    const d = diseaseSelect ? diseaseSelect.value : '';
+    const y = yearSelect ? yearSelect.value : '';
+    const enabled = (!!d && d !== '') && (!!y && y !== '');
+
+    if (viewMapBtn) {
+      viewMapBtn.disabled = !enabled;
+      if (viewMapBtn.disabled) {
+        viewMapBtn.classList.add('disabled');
+        viewMapBtn.setAttribute('aria-disabled', 'true');
+      } else {
+        viewMapBtn.classList.remove('disabled');
+        viewMapBtn.removeAttribute('aria-disabled');
+      }
+    }
+
+    if (openStateBtn) {
+      openStateBtn.disabled = !enabled;
+      if (openStateBtn.disabled) {
+        openStateBtn.classList.add('disabled');
+        openStateBtn.setAttribute('aria-disabled', 'true');
+      } else {
+        openStateBtn.classList.remove('disabled');
+        openStateBtn.removeAttribute('aria-disabled');
+      }
+    }
+  }
+
+  // initialize and wire change events
+  updateActionButtons();
+  if (yearSelect) yearSelect.addEventListener('change', updateActionButtons);
+  // also ensure disease change updates buttons (already handled during populateYearsForDisease flow)
+
 })();
+

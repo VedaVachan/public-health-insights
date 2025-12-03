@@ -177,16 +177,21 @@
       return;
     }
 
-    years.forEach((y) => {
-      const opt = document.createElement('option');
-      opt.value = String(y);
-      opt.textContent = String(y);
-      yearSelect.appendChild(opt);
-    });
+    // Insert placeholder so user must choose a year
+const ph = document.createElement('option');
+ph.value = '';
+ph.textContent = 'Select year';
+ph.disabled = true;
+ph.selected = true;
+yearSelect.appendChild(ph);
 
-    // try to select a sensible default - 2010 if available, else latest
-    if (years.includes(2010)) yearSelect.value = '2010';
-    else yearSelect.value = String(years[years.length - 1]);
+// Add actual year options
+years.forEach((y) => {
+  const opt = document.createElement('option');
+  opt.value = String(y);
+  opt.textContent = String(y);
+  yearSelect.appendChild(opt);
+});
   }
 
   // on load: try to populate year list for current disease selection

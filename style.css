@@ -193,7 +193,24 @@ body{
 /* Minor utility classes */
 .link-muted{ color:var(--muted); font-weight:600; text-decoration: none; }
 
-/* End of style.css */
+/* Status message box (added) */
+#app-status {
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  background: rgba(255,255,255,0.04);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.04);
+  padding: 8px 12px;
+  border-radius: 6px;
+  max-width: 100%;
+  box-sizing: border-box;
+  display: none; /* stays hidden until needed */
+}
+
+/* Variants for status */
+#app-status.error { background: rgba(255,80,80,0.12); border-color: rgba(255,80,80,0.25); color: #ffecec; }
+#app-status.warn  { background: rgba(255,200,80,0.06); border-color: rgba(255,200,80,0.15); color: #fff6e6; }
+#app-status.ok    { background: rgba(80,200,120,0.06); border-color: rgba(80,200,120,0.15); color: #e9fff0; }
 
 /* SINGLE-COLUMN STACKED DASHBOARD LAYOUT */
 .container.single-col {
@@ -211,7 +228,7 @@ body{
   box-sizing: border-box;
 }
 
-/* Map sizing */
+/* Map sizing (override earlier if needed) */
 #map {
   width: 100%;
   height: 480px;
@@ -245,7 +262,3 @@ body{
   .heatmap-wrapper.heatmap-wide { height: 400px; }
   .container.single-col { padding: 12px; }
 }
-
-
-
-

@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Public Health Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="header">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <img src="logo.png" alt="Disease Tracker Portal logo">
+      </div>
+      <div class="title">
+        <h1>Public Health Dashboard</h1>
+        <small>Interactive maps & state reports</small>
+      </div>
+    </div>
+
+    <div class="header-controls">
+      <label for="diseaseSelect">Disease</label>
+      <select id="diseaseSelect" aria-label="disease">
+        <option value="HIV">HIV</option>
+        <option value="TB">TB</option>
+        <option value="Diabetes">Diabetes</option>
+        <option value="Hepatitis-A">Hepatitis-A</option>
+        <option value="Hepatitis-B">Hepatitis-B</option>
+        <option value="Hepatitis-C">Hepatitis-C</option>
+        <option value="Gonorrhea">Gonorrhea</option>
+        <option value="Chlamydia">Chlamydia</option>
+        <option value="syphilis">syphilis</option>
+      </select>
+
+      <label for="yearInput">Year</label>
+      <select id="yearInput" aria-label="year"></select>
+
+      <button id="viewMap" class="btn-light">Open Map</button>
+      <button id="openState" class="btn-green">Open Example State</button>
+
+      <button id="themeToggle" aria-label="Toggle Theme" class="theme-btn"></button>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <div class="hero fade-in">
+    <img src="assets/usa_map.jpg" alt="Health analytics map" class="hero-img" onerror="this.style.display='none'">
+    <div class="hero-overlay">
+      <h2>Health Analytics Across USA & Territories</h2>
+      <p>Interactive state maps • Year-by-year trends • Public health resources</p>
+      <div class="hero-actions">
+        <button id="heroOpenMap" class="btn-ghost">View National Map</button>
+        <a class="link-muted" href="#datasources" title="Jump to data sources">Data Sources ↓</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="container fade-in-delayed">
+    <div class="grid">
+      <!-- Left column -->
+      <section class="left-col">
+        <article class="card">
+          <h3 class="section-title">About U.S. Population</h3>
+          <p>The United States has an estimated population of <strong>347 million (34.7 crore)</strong>, across 50 states and 5 inhabited territories — Puerto Rico, Guam, U.S. Virgin Islands, American Samoa, and the Northern Mariana Islands.</p>
+        </article>
+
+        <article class="card">
+          <h3 class="section-title">Healthcare Snapshot</h3>
+          <p>Healthcare spending in the U.S. is nearly <strong>18% of GDP</strong>. Public health agencies such as the CDC and NIH lead national efforts for disease prevention and surveillance.</p>
+        </article>
+
+        <article class="card">
+          <h3 class="section-title">Disease Awareness Facts</h3>
+          <ul class="facts">
+            <li><strong>HIV:</strong> Over 1.2 million people in the U.S. live with HIV.</li>
+            <li><strong>Diabetes:</strong> Affects nearly 11% of adults nationwide.</li>
+            <li><strong>Tuberculosis:</strong> Though rare, remains a concern in high-density urban areas.</li>
+            <li><strong>Hepatitis C:</strong> Leading cause of liver transplants in the U.S.</li>
+          </ul>
+        </article>
+
+        <article id="datasources" class="card">
+          <h3 class="section-title">Explore These Data Sources</h3>
+          <ul class="datasources-list">
+            <li><a href="https://wonder.cdc.gov" target="_blank" rel="noopener">CDC WONDER</a></li>
+            <li><a href="https://www.cdc.gov/atlas" target="_blank" rel="noopener">CDC AtlasPlus</a></li>
+            <li><a href="https://gis.cdc.gov/grasp/diabetes/DiabetesAtlas.html" target="_blank" rel="noopener">CDC Diabetes Surveillance System</a></li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h3 class="section-title">Health Suggestions & Helpful Links</h3>
+          <ul class="datasources-list">
+            <li><a href="https://www.cdc.gov/vaccines" target="_blank" rel="noopener">Vaccination guidance — CDC</a></li>
+            <li><a href="https://www.nih.gov/health-information" target="_blank" rel="noopener">NIH — Public health information</a></li>
+            <li><a href="https://healthfinder.gov" target="_blank" rel="noopener">Healthfinder — Prevention & checkups</a></li>
+          </ul>
+          <p class="note">Tip: Regular checkups, up-to-date vaccinations and local awareness help reduce disease spread. Use the map to explore state-level trends.</p>
+        </article>
+      </section>
+
+      <!-- Right column -->
+      <aside class="right-col">
+        <div class="card">
+          <h4 class="small-title">Navigation</h4>
+          <a class="btn-link" href="map.html">Open National Map →</a>
+          <a class="btn-link" href="state.html?state=California">Sample State →</a>
+          <a class="btn-link" href="#datasources">Data Sources →</a>
+        </div>
+
+        <div class="card">
+          <h4 class="small-title">At a glance</h4>
+          <ul class="atglance">
+            <li><strong>50</strong> states</li>
+            <li><strong>5</strong> territories</li>
+            <li><strong>18%</strong> GDP spent on healthcare</li>
+            <li><strong>1.2M+</strong> people living with HIV</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="footer fade-in-delayed">
+    <p>© Public Health Dashboard — curated resources and state reports.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
+
+
+
+

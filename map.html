@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Map — Disease Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="brand">
+      <div class="logo">
+        <img src="logo.png" alt="Public Health Dashboard Logo" />
+      </div>
+      <div class="title">
+        <h1>Map View</h1>
+        <small>Hover a state to see cases — click to open state page</small>
+      </div>
+    </div>
+
+    <div class="header-controls">
+      <select id="dsSelectHeader" aria-label="dataset">
+        <option value="HIV">HIV</option>
+        <option value="TB">TB</option>
+        <option value="Diabetes">Diabetes</option>
+        <option value="Hepatitis-A">Hepatitis-A</option>
+        <option value="Hepatitis-B">Hepatitis-B</option>
+        <option value="Hepatitis-C">Hepatitis-C</option>
+        <option value="Gonorrhea">Gonorrhea</option>
+        <option value="Chlamydia">Chlamydia</option>
+        <option value="syphilis">syphilis</option>
+      </select>
+
+      <select id="yearSelectHeader" style="width:110px"></select>
+
+      <button id="loadHeader" class="btn-light">Load</button>
+      <button id="themeToggleHeader" class="theme-btn" title="Toggle theme">🌙</button>
+      <a class="card" style="padding:8px 10px; border-radius:8px;" href="index.html">Home</a>
+    </div>
+  </header>
+
+<main class="container single-col">
+  <!-- Choropleth Map -->
+  <div class="card">
+    <div class="section-title">Choropleth — State cases</div>
+    <div id="map"></div>
+    <div style="display:flex; justify-content:space-between; margin-top:12px;">
+      <div id="totalCases" style="font-weight:700">Total USA Cases: —</div>
+      <div id="selectedInfo" class="note"></div>
+    </div>
+  </div>
+
+  <!-- Cases by State — Selected Year -->
+  <div class="card" style="margin-top:20px;">
+    <div class="section-title">Cases by State — Selected Year</div>
+    <div style="min-height:320px;">
+      <canvas id="casesBar" class="chart-canvas"></canvas>
+    </div>
+  </div>
+
+  <!-- USA Trend — All Years -->
+  <div class="card" style="margin-top:20px;">
+    <div class="section-title">USA Trend — All Years</div>
+    <div style="min-height:320px;">
+      <canvas id="casesLine" class="chart-canvas"></canvas>
+    </div>
+  </div>
+
+  <!-- Distribution — State counts -->
+  <div class="card" style="margin-top:20px;">
+    <div class="section-title">Distribution — State counts</div>
+    <div style="min-height:260px;">
+      <canvas id="casesHist" class="chart-canvas"></canvas>
+    </div>
+  </div>
+
+  <!-- Heatmap — state × year (matrix) -->
+  <div class="card" style="margin-top:20px;">
+    <div class="section-title">Heatmap — state × year (matrix)</div>
+    <div class="heatmap-wrapper heatmap-wide" id="heatmapWrapper">
+      <canvas id="matrixHeatmap"></canvas>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="card" style="margin-top:20px;">
+    <div class="section-title">Legend</div>
+    <div id="legendWrap"></div>
+  </div>
+</main>
+
+
+  <!-- libs (SheetJS, Chart.js, matrix plugin, optional zoom/pan, Leaflet) -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix@1.1.0/dist/chartjs-chart-matrix.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-box-and-violin-plot@3.0.0/dist/chartjs-chart-box-and-violin-plot.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- page logic -->
+<script src="map.js"></script>
+</body>
+</html>
+
+
+
+

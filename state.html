@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>State — Disease Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="brand">
+      <div class="logo">
+        <img src="logo.png" alt="Public Health Dashboard Logo" />
+      </div>
+      <div class="title">
+        <h1 id="stateTitle">State Analytics</h1>
+        <small>Time series & distributions</small>
+      </div>
+    </div>
+
+    <div class="header-controls">
+      <button id="themeToggleState" class="theme-btn" title="Toggle Theme">🌙</button>
+      <a class="card" style="padding:8px 10px; border-radius:8px;" href="map.html">← Back to Map</a>
+      <a class="card" style="padding:8px 10px; border-radius:8px;" href="index.html">Home</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="grid">
+      <div>
+        <div class="card">
+          <div class="section-title" id="titleLeft">State Map</div>
+          <div id="stateMap"></div>
+          <div id="stateSummary" style="margin-top:10px; font-weight:700"></div>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <div class="chart-title">Line Plot — Trend over time</div>
+          <div style="min-height:320px;">
+            <canvas id="lineChart" class="chart-canvas"></canvas>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <div class="chart-title">Scatter Plot — Cases vs Year</div>
+          <div style="min-height:240px;">
+            <canvas id="scatterChart" class="chart-small chart-canvas"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <aside>
+        <div class="card">
+          <div class="section-title">Bar Plot — Yearly counts</div>
+          <div style="min-height:260px;">
+            <canvas id="barChart" class="chart-canvas"></canvas>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <div class="section-title">Histogram — distribution of yearly counts</div>
+          <div style="min-height:220px;">
+            <canvas id="histChart" class="chart-small chart-canvas"></canvas>
+          </div>
+        </div>
+
+      </aside>
+    </div>
+
+    <div class="card" style="margin-top:18px;">
+      <div class="section-title">Raw data</div>
+      <div style="overflow:auto;">
+        <table id="rawTable" style="width:100%; border-collapse:collapse;"></table>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix@1.1.0/dist/chartjs-chart-matrix.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-box-and-violin-plot@3.0.0/dist/chartjs-chart-box-and-violin-plot.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script src="state.js"></script>
+</body>
+</html>
+
+
+
+
+
+
